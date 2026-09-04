@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assumir Chamado — SENAI Suporte</title>
+    <meta name="description" content="Assuma a responsabilidade pelo chamado de suporte selecionado.">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" th:href="@{/painel}">
+            <div class="sidebar-logo">S</div>
+            <div>
+                <div class="sidebar-title"><span style="color:var(--color-red)">SENAI</span> Suporte</div>
+                <div class="sidebar-subtitle">Painel do Técnico</div>
+            </div>
+        </a>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-label">Menu</div>
+            <a th:href="@{/painel}" class="active">
+                <span class="nav-icon">📋</span>
+                Chamados
+            </a>
+            <a th:href="@{/solicitacao}">
+                <span class="nav-icon">🌐</span>
+                Portal Público
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <strong th:text="${#authentication.name}">tecnico@email.com</strong>
+                Técnico
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-outline btn-sm w-100" id="btn-logout">
+                    Sair
+                </button>
+            </form>
+        </div>
+
+    </aside>
+
+    <!-- ── Conteúdo ── -->
+    <div class="app-content">
+
+        <header class="app-header">
+            <div>
+                <div class="app-header-title">Assumir Chamado</div>
+                <div class="app-header-sub">
+                    Chamado #<span th:text="${solicitacao.id}">0</span>
+                </div>
+            </div>
+            <button
+                    class="sidebar-toggle"
+                    id="sidebar-toggle"
+                    onclick="toggleSidebar()"
+                    aria-label="Abrir menu"
+            >
+                ☰
+            </button>
+        </header>
+
+        <main class="app-main">
+
+            <!-- Resumo do chamado -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-icon blue">📋</div>
+                        <div>
+                            <div class="card-title">Dados do Chamado</div>
+                            <div class="card-subtitle">
+                                Verifique as informações antes de assumir
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Badge de status -->
+                    <span class="badge badge-pendente">
+                        Pendente
+                    </span>
+                </div>
+
+                <div class="card-body">
+                    <div class="detail-grid">
+
+                        <div class="detail-item">
+                            <span class="detail-label">Solicitante</span>
+                            <span class="detail-value" th:text="${solicitacao.nomeSolicitante}">—</span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">NIF</span>
+                            <span class="detail-value" th:text="${solicitacao.nif}">—</span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">Sala</span>
+                            <span class="detail-value" th:text="${solicitacao.numeroSala}">—</span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">Patrimônio</span>
+                            <span class="detail-value" th:text="${solicitacao.codigoPatrimonio}">—</span>
+                        </div>
+
+                        <div class="detail-item">
+                            <span class="detail-label">Tipo de Problema</span>
+                            <span class="badge badge-tipo" th:text="${solicitacao.tipoProblema.descricao}">—</span>
+                        </div>
+
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="detail-label mb-2">Descrição do Problema</div>
+                        <div class="detail-description" th:text="${solicitacao.descricaoProblema}">
+                            Descrição aqui.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulário para assumir -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-icon blue">👤</div>
+                        <div>
+                            <div class="card-title">Responsável pelo Atendimento</div>
+                            <div class="card-subtitle">
+                                O chamado passará para "Em andamento"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form
+                        th:action="@{/painel/assumir/{id}(id=${solicitacao.id})}"
+                        method="post"
+                        id="form-assumir"
+                >
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}"
+                    >
+
+                    <div class="card-body">
+
+                        <!-- Técnico responsável (pré-preenchido e bloqueado) -->
+                        <div class="form-group">
+                            <label class="form-label" for="tecnicoResponsavel">
+                                Técnico Responsável
+                                <span class="req">*</span>
+                            </label>
+                            <input
+                                    type="text"
+                                    id="tecnicoResponsavel"
+                                    name="tecnicoResponsavel"
+                                    class="form-control"
+                                    th:value="${tecnicoLogado}"
+                                    readonly
+                                    style="background: var(--color-bg); cursor: not-allowed;"
+                            >
+                            <div class="form-hint">
+                                ℹ️ Preenchido automaticamente com o técnico logado.
+                            </div>
+                        </div>
+
+                        <!-- Observações -->
+                        <div class="form-group mb-0">
+                            <label class="form-label" for="observacoes">
+                                Observações
+                            </label>
+                            <textarea
+                                    id="observacoes"
+                                    name="observacoes"
+                                    class="form-control"
+                                    placeholder="Descreva o diagnóstico inicial, materiais necessários ou qualquer informação relevante…"
+                                    rows="4"
+                            ></textarea>
+                            <div class="form-hint">
+                                Campo opcional. Você poderá adicionar mais informações ao editar o chamado.
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <a th:href="@{/painel}" class="btn btn-ghost" id="btn-cancelar">
+                            Cancelar
+                        </a>
+                        <button
+                                type="submit"
+                                class="btn btn-primary"
+                                id="btn-confirmar-assumir"
+                        >
+                            ✅ Assumir Chamado
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebar-overlay').classList.toggle('open');
+    }
+</script>
+
+</body>
+</html>

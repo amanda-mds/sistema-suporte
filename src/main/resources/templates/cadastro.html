@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro — SENAI Suporte</title>
+    <meta name="description" content="Cadastre-se como técnico para acessar o painel de chamados.">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <!-- Logo / Brand -->
+    <a class="auth-brand" th:href="@{/}">
+        <div class="auth-logo">S</div>
+        <div class="auth-brand-name">
+            <span>SENAI</span> Suporte
+        </div>
+    </a>
+
+    <!-- Card de cadastro -->
+    <div class="auth-card anim-fade-up" style="max-width: 440px;">
+
+        <div class="auth-card-header">
+            <div class="auth-card-title">Cadastro de Técnico</div>
+            <div class="auth-card-sub">Preencha os dados para criar sua conta</div>
+        </div>
+
+        <div class="auth-card-body">
+
+            <!-- Mensagem de erro genérico -->
+            <div
+                    th:if="${erro}"
+                    class="alert alert-danger mb-4"
+            >
+                <span class="alert-icon">⚠️</span>
+                <span th:text="${erro}">Erro ao realizar cadastro.</span>
+            </div>
+
+            <!-- Formulário de cadastro -->
+            <form
+                    th:action="@{/cadastro}"
+                    th:object="${tecnico}"
+                    method="post"
+                    id="form-cadastro"
+                    novalidate
+            >
+                <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}"
+                >
+
+                <!-- Nome -->
+                <div class="form-group">
+                    <label class="form-label" for="nome">
+                        Nome completo
+                        <span class="req">*</span>
+                    </label>
+                    <input
+                            type="text"
+                            id="nome"
+                            class="form-control"
+                            th:field="*{nome}"
+                            th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid' : ''"
+                            placeholder="Seu nome completo"
+                            autocomplete="name"
+                    >
+                    <div
+                            th:if="${#fields.hasErrors('nome')}"
+                            class="form-error"
+                    >
+                        ⚠ <span th:errors="*{nome}">Nome inválido</span>
+                    </div>
+                </div>
+
+                <!-- E-mail -->
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        E-mail
+                        <span class="req">*</span>
+                    </label>
+                    <input
+                            type="email"
+                            id="email"
+                            class="form-control"
+                            th:field="*{email}"
+                            th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                            placeholder="seu@email.com"
+                            autocomplete="email"
+                    >
+                    <div
+                            th:if="${#fields.hasErrors('email')}"
+                            class="form-error"
+                    >
+                        ⚠ <span th:errors="*{email}">E-mail inválido</span>
+                    </div>
+                </div>
+
+                <!-- Senha -->
+                <div class="form-group">
+                    <label class="form-label" for="senha">
+                        Senha
+                        <span class="req">*</span>
+                    </label>
+                    <input
+                            type="password"
+                            id="senha"
+                            class="form-control"
+                            th:field="*{senha}"
+                            th:classappend="${#fields.hasErrors('senha')} ? 'is-invalid' : ''"
+                            placeholder="Mínimo 6 caracteres"
+                            autocomplete="new-password"
+                    >
+                    <div
+                            th:if="${#fields.hasErrors('senha')}"
+                            class="form-error"
+                    >
+                        ⚠ <span th:errors="*{senha}">Senha inválida</span>
+                    </div>
+                </div>
+
+                <button
+                        type="submit"
+                        class="btn btn-primary w-100 mt-2"
+                        id="btn-cadastrar"
+                >
+                    Criar conta
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="auth-footer-text">
+        Já tem conta?
+        <a th:href="@{/login}">Fazer login</a>
+        &nbsp;·&nbsp;
+        <a th:href="@{/solicitacao}">Abrir um chamado</a>
+    </div>
+
+</div>
+
+</body>
+</html>

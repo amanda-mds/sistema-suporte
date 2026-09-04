@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Chamado — SENAI Suporte</title>
+    <meta name="description" content="Edite os dados e o status do chamado de suporte.">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+
+        <a class="sidebar-brand" th:href="@{/painel}">
+            <div class="sidebar-logo">S</div>
+            <div>
+                <div class="sidebar-title"><span style="color:var(--color-red)">SENAI</span> Suporte</div>
+                <div class="sidebar-subtitle">Painel do Técnico</div>
+            </div>
+        </a>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-label">Menu</div>
+            <a th:href="@{/painel}" class="active">
+                <span class="nav-icon">📋</span>
+                Chamados
+            </a>
+            <a th:href="@{/solicitacao}">
+                <span class="nav-icon">🌐</span>
+                Portal Público
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <strong th:text="${#authentication.name}">tecnico@email.com</strong>
+                Técnico
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="btn btn-outline btn-sm w-100" id="btn-logout">
+                    Sair
+                </button>
+            </form>
+        </div>
+
+    </aside>
+
+    <!-- ── Conteúdo ── -->
+    <div class="app-content">
+
+        <header class="app-header">
+            <div>
+                <div class="app-header-title">Editar Chamado</div>
+                <div class="app-header-sub">
+                    Chamado #<span th:text="${solicitacao.id}">0</span>
+                </div>
+            </div>
+            <button
+                    class="sidebar-toggle"
+                    id="sidebar-toggle"
+                    onclick="toggleSidebar()"
+                    aria-label="Abrir menu"
+            >
+                ☰
+            </button>
+        </header>
+
+        <main class="app-main">
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-icon blue">✏️</div>
+                        <div>
+                            <div class="card-title">Dados da Solicitação</div>
+                            <div class="card-subtitle">
+                                Todos os campos marcados com * são obrigatórios
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form
+                        th:action="@{/painel/editar/{id}(id=${solicitacao.id})}"
+                        th:object="${solicitacao}"
+                        method="post"
+                        id="form-editar"
+                        novalidate
+                >
+                    <input
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}"
+                    >
+
+                    <div class="card-body card-body-lg">
+
+                        <!-- NIF + Nome -->
+                        <div class="form-row mb-4">
+
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="nif">
+                                    NIF <span class="req">*</span>
+                                </label>
+                                <input
+                                        type="text"
+                                        id="nif"
+                                        class="form-control"
+                                        th:field="*{nif}"
+                                        th:classappend="${#fields.hasErrors('nif')} ? 'is-invalid' : ''"
+                                        placeholder="Ex: 12345678"
+                                >
+                                <div th:if="${#fields.hasErrors('nif')}" class="form-error">
+                                    ⚠ <span th:errors="*{nif}">NIF inválido</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="nomeSolicitante">
+                                    Nome do Solicitante <span class="req">*</span>
+                                </label>
+                                <input
+                                        type="text"
+                                        id="nomeSolicitante"
+                                        class="form-control"
+                                        th:field="*{nomeSolicitante}"
+                                        th:classappend="${#fields.hasErrors('nomeSolicitante')} ? 'is-invalid' : ''"
+                                        placeholder="Nome completo"
+                                >
+                                <div th:if="${#fields.hasErrors('nomeSolicitante')}" class="form-error">
+                                    ⚠ <span th:errors="*{nomeSolicitante}">Nome inválido</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Sala + Patrimônio -->
+                        <div class="form-row mb-4">
+
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="numeroSala">
+                                    Número da Sala <span class="req">*</span>
+                                </label>
+                                <input
+                                        type="text"
+                                        id="numeroSala"
+                                        class="form-control"
+                                        th:field="*{numeroSala}"
+                                        th:classappend="${#fields.hasErrors('numeroSala')} ? 'is-invalid' : ''"
+                                        placeholder="Ex: 101, Lab-A"
+                                >
+                                <div th:if="${#fields.hasErrors('numeroSala')}" class="form-error">
+                                    ⚠ <span th:errors="*{numeroSala}">Sala inválida</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="codigoPatrimonio">
+                                    Código do Patrimônio <span class="req">*</span>
+                                </label>
+                                <input
+                                        type="text"
+                                        id="codigoPatrimonio"
+                                        class="form-control"
+                                        th:field="*{codigoPatrimonio}"
+                                        th:classappend="${#fields.hasErrors('codigoPatrimonio')} ? 'is-invalid' : ''"
+                                        placeholder="Ex: PAT-00123"
+                                >
+                                <div th:if="${#fields.hasErrors('codigoPatrimonio')}" class="form-error">
+                                    ⚠ <span th:errors="*{codigoPatrimonio}">Código inválido</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Tipo + Status -->
+                        <div class="form-row mb-4">
+
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="tipoProblema">
+                                    Tipo do Problema <span class="req">*</span>
+                                </label>
+                                <select
+                                        id="tipoProblema"
+                                        class="form-control"
+                                        th:field="*{tipoProblema}"
+                                        th:classappend="${#fields.hasErrors('tipoProblema')} ? 'is-invalid' : ''"
+                                >
+                                    <option value="">Selecione…</option>
+                                    <option
+                                            th:each="tipo : ${tipos}"
+                                            th:value="${tipo.name()}"
+                                            th:text="${tipo.descricao}"
+                                    >
+                                        Tipo
+                                    </option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('tipoProblema')}" class="form-error">
+                                    ⚠ <span th:errors="*{tipoProblema}">Tipo inválido</span>
+                                </div>
+                            </div>
+
+                            <!-- Status (editável pelo técnico) -->
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="status">
+                                    Status <span class="req">*</span>
+                                </label>
+                                <select
+                                        id="status"
+                                        class="form-control"
+                                        th:field="*{status}"
+                                >
+                                    <option
+                                            th:each="s : ${statusList}"
+                                            th:value="${s.name()}"
+                                            th:text="${s.descricao}"
+                                    >
+                                        Status
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <!-- Descrição -->
+                        <div class="form-group mb-0">
+                            <label class="form-label" for="descricaoProblema">
+                                Descrição do Problema <span class="req">*</span>
+                            </label>
+                            <textarea
+                                    id="descricaoProblema"
+                                    class="form-control"
+                                    th:field="*{descricaoProblema}"
+                                    th:classappend="${#fields.hasErrors('descricaoProblema')} ? 'is-invalid' : ''"
+                                    placeholder="Descreva o problema…"
+                                    rows="5"
+                            ></textarea>
+                            <div th:if="${#fields.hasErrors('descricaoProblema')}" class="form-error">
+                                ⚠ <span th:errors="*{descricaoProblema}">Descrição inválida</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <a th:href="@{/painel}" class="btn btn-ghost" id="btn-cancelar">
+                            Cancelar
+                        </a>
+                        <button
+                                type="submit"
+                                class="btn btn-primary"
+                                id="btn-salvar"
+                        >
+                            Salvar alterações
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebar-overlay').classList.toggle('open');
+    }
+</script>
+
+</body>
+</html>

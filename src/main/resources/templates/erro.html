@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Erro — SENAI Suporte</title>
+
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <a class="auth-brand" th:href="@{/}">
+        <div class="auth-logo">S</div>
+
+        <div class="auth-brand-name">
+            <span>SENAI</span> Suporte
+        </div>
+    </a>
+
+    <div class="auth-card anim-fade-up">
+
+        <div class="auth-card-header">
+            <div class="auth-card-title">
+                Ops! Algo deu errado
+            </div>
+
+            <div class="auth-card-sub">
+                Não foi possível concluir a operação.
+            </div>
+        </div>
+
+        <div class="auth-card-body">
+
+            <div class="alert alert-danger">
+
+                <span class="alert-icon">
+                    ⚠️
+                </span>
+
+                <div>
+                    <strong>Erro ao processar sua solicitação.</strong>
+
+                    <div
+                            th:if="${message != null}"
+                            th:text="${message}"
+                            class="mt-2"
+                    >
+                        Ocorreu um erro inesperado.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-3 mt-4">
+
+                <a
+                        th:href="@{/}"
+                        class="btn btn-primary"
+                >
+                    Voltar ao início
+                </a>
+
+                <a
+                        th:href="@{/painel}"
+                        class="btn btn-outline"
+                >
+                    Ir para o painel
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

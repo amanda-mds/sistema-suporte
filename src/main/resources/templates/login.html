@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — SENAI Suporte</title>
+    <meta name="description" content="Acesse a área restrita do sistema de chamados técnicos SENAI.">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <!-- Logo / Brand -->
+    <a class="auth-brand" th:href="@{/}">
+        <div class="auth-logo">S</div>
+        <div class="auth-brand-name">
+            <span>SENAI</span> Suporte
+        </div>
+    </a>
+
+    <!-- Card de login -->
+    <div class="auth-card anim-fade-up">
+
+        <div class="auth-card-header">
+            <div class="auth-card-title">Acesso Restrito</div>
+            <div class="auth-card-sub">Entre com suas credenciais de técnico</div>
+        </div>
+
+        <div class="auth-card-body">
+
+            <!-- Mensagem de erro de autenticação -->
+            <div
+                    th:if="${param.erro}"
+                    class="alert alert-danger mb-4"
+            >
+                <span class="alert-icon">⚠️</span>
+                <span>E-mail ou senha incorretos. Tente novamente.</span>
+            </div>
+
+            <!-- Mensagem de logout -->
+            <div
+                    th:if="${param.logout}"
+                    class="alert alert-info mb-4"
+            >
+                <span class="alert-icon">ℹ️</span>
+                <span>Você saiu da sessão com sucesso.</span>
+            </div>
+
+            <!-- Mensagem de cadastro concluído -->
+            <div
+                    th:if="${sucesso}"
+                    class="alert alert-success mb-4"
+            >
+                <span class="alert-icon">✅</span>
+                <span th:text="${sucesso}">Cadastro realizado com sucesso!</span>
+            </div>
+
+            <!-- Formulário de login (Spring Security processa /login via POST) -->
+            <form
+                    action="/login"
+                    method="post"
+                    id="form-login"
+                    novalidate
+            >
+                <input
+                        type="hidden"
+                        th:name="${_csrf.parameterName}"
+                        th:value="${_csrf.token}"
+                >
+
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                        E-mail
+                        <span class="req">*</span>
+                    </label>
+                    <input
+                            type="email"
+                            id="username"
+                            name="username"
+                            class="form-control"
+                            th:classappend="${param.erro} ? 'is-invalid' : ''"
+                            placeholder="seu@email.com"
+                            autocomplete="email"
+                            required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        Senha
+                        <span class="req">*</span>
+                    </label>
+                    <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            th:classappend="${param.erro} ? 'is-invalid' : ''"
+                            placeholder="Sua senha"
+                            autocomplete="current-password"
+                            required
+                    >
+                </div>
+
+                <button
+                        type="submit"
+                        class="btn btn-primary w-100 mt-2"
+                        id="btn-login"
+                >
+                    Entrar
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="auth-footer-text">
+        Não tem acesso?
+        <a th:href="@{/cadastro}">Cadastrar como técnico</a>
+        &nbsp;·&nbsp;
+        <a th:href="@{/solicitacao}">Abrir um chamado</a>
+    </div>
+
+</div>
+
+</body>
+</html>
