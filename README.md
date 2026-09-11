@@ -1,40 +1,32 @@
 # Sistema de Suporte Técnico
 
-Projeto desenvolvido em Java com Spring Boot para gerenciamento de chamados de suporte técnico em um ambiente educacional, como o SENAI.
+Projeto desenvolvido em aula, junto com o professor, no curso técnico do SENAI, como prática de desenvolvimento Back-end com Java e Spring Boot.
 
-A proposta do sistema é centralizar as solicitações de suporte, organizar o atendimento e permitir o acompanhamento do status de cada chamado.
+> **Sobre este projeto:** este foi um exercício guiado em sala de aula, com foco em fixar conceitos específicos na prática — autenticação, autorização e modelagem de dados — e não um projeto autoral completo.
 
-## Problema
+## Sobre o sistema
 
-Em ambientes com muitas salas, equipamentos e diferentes tipos de ocorrência, as solicitações de suporte podem acabar sendo feitas de forma desorganizada, sem registro centralizado, sem acompanhamento de status e sem definição clara de quem está responsável pelo atendimento.
-
-Isso pode dificultar o controle dos chamados e atrasar a resolução dos problemas.
-
-## Solução
-
-O sistema permite que usuários registrem solicitações de suporte informando os dados necessários para o atendimento.
-
-Os técnicos possuem uma área restrita onde podem visualizar os chamados, aplicar filtros, assumir solicitações, editar informações, concluir atendimentos e excluir registros.
-
-Cada chamado passa pelo fluxo:
-
-`PENDENTE → EM_ANDAMENTO → CONCLUIDO`
-
-Dessa forma, é possível acompanhar de maneira simples em qual etapa cada solicitação se encontra.
+O sistema simula um portal de abertura e gerenciamento de chamados técnicos (informática, elétrica e zeladoria), permitindo que qualquer pessoa abra uma solicitação de suporte e que técnicos cadastrados acompanhem, assumam e concluam esses chamados.
 
 ## Funcionalidades
 
-- abertura de chamados;
-- cadastro e login de técnicos;
-- painel restrito para técnicos;
-- busca por nome do solicitante;
-- filtros por tipo de problema e status;
-- técnico pode assumir um chamado;
-- registro do técnico responsável;
-- edição de solicitações;
-- conclusão de chamados;
-- exclusão de registros;
-- controle de status do atendimento.
+### Portal público (sem login)
+- Abertura de solicitação de suporte, informando NIF, nome do solicitante, sala, patrimônio, tipo de problema e descrição
+
+### Painel do técnico (requer login)
+- Listagem de todas as solicitações, com filtros por tipo, status e nome do solicitante
+- Assumir uma solicitação pendente
+- Concluir uma solicitação em andamento
+- Editar dados de uma solicitação
+- Excluir uma solicitação
+
+## Fluxo da solicitação
+
+```
+PENDENTE → EM_ANDAMENTO → CONCLUIDO
+```
+
+As transições de status são validadas na camada de serviço: só é possível assumir uma solicitação pendente, e só é possível concluir uma solicitação que já está em andamento.
 
 ## Tecnologias utilizadas
 
@@ -44,66 +36,66 @@ Dessa forma, é possível acompanhar de maneira simples em qual etapa cada solic
 - Spring Security
 - Spring Data JPA
 - Hibernate
+- Thymeleaf
 - Bean Validation
 - MySQL
-- Thymeleaf
-- HTML
-- CSS
 - Maven
 
 ## Estrutura do projeto
 
-```text
-src/main/java/com/suporte/
+```
+src/main/java/com/senai/suporte/suporte
 ├── config
 ├── controller
+├── exception
 ├── model
 ├── repository
 └── service
 ```
 
-A aplicação foi organizada em camadas para separar responsabilidades:
+A aplicação segue a arquitetura em camadas: **controller** (requisições e navegação), **service** (regras de negócio), **repository** (acesso a dados), **model** (entidades) e **config** (segurança e configuração da aplicação).
 
-controller: recebe as requisições e controla a navegação;
-service: concentra as regras de negócio;
-repository: realiza a comunicação com o banco de dados;
-model: contém as entidades do sistema;
-config: contém as configurações da aplicação e de segurança.
+## Segurança
 
-## Fluxo dos chamados
+- Senhas de técnico armazenadas com hash **BCrypt**
+- Credenciais de banco de dados lidas por variável de ambiente (`DB_PASSWORD`), nunca fixas no código
 
-Quando uma solicitação é criada, ela começa com o status:
+## Como executar o projeto
 
-PENDENTE
+### Pré-requisitos
+- Java 21
+- MySQL
 
-Quando um técnico assume o atendimento:
+### Configuração do banco de dados
 
-EM_ANDAMENTO
+A senha do MySQL é lida da variável de ambiente `DB_PASSWORD`. Defina-a antes de rodar o projeto:
 
-Após a conclusão:
-
-CONCLUIDO
-
-Esse fluxo ajuda a organizar e acompanhar o andamento de cada chamado.
-
-## Banco de dados
-
-O projeto utiliza MySQL para persistência dos dados.
-
-Exemplo de configuração:
-
-```text
-spring.datasource.url=jdbc:mysql://localhost:3306/suporte
-spring.datasource.username=root
-spring.datasource.password=SUA_SENHA
-
-spring.jpa.hibernate.ddl-auto=update
+```bash
+export DB_PASSWORD=sua_senha_aqui
 ```
 
-## Sobre o projeto
+No Windows (PowerShell):
 
-Este projeto foi desenvolvido com foco em Back-end utilizando Java e Spring Boot.
+```powershell
+$env:DB_PASSWORD="sua_senha_aqui"
+```
 
-O objetivo foi praticar conceitos como autenticação, persistência de dados, arquitetura em camadas, regras de negócio e gerenciamento de chamados.
+### Executando
 
-A interface foi desenvolvida apenas como apoio para demonstrar o funcionamento do sistema.
+```bash
+./mvnw spring-boot:run
+```
+
+A aplicação sobe em `http://localhost:8080`.
+
+## Possíveis evoluções
+
+Como projeto de prática, existem pontos que ficariam para uma próxima iteração:
+
+- Testes automatizados das regras de negócio
+- Relacionamento direto entre a solicitação assumida e a entidade `Tecnico` (hoje o técnico responsável é registrado como texto livre)
+- Fluxo de aprovação para cadastro de novos técnicos, em vez de cadastro direto
+
+## Sobre este projeto
+
+Este projeto foi desenvolvido durante as aulas do curso Desenvolvimento Back-end do SENAI, com o objetivo de praticar conceitos de Back-end com Java e Spring Boot em um contexto guiado.
